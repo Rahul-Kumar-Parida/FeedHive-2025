@@ -1,11 +1,9 @@
-// src/services/auth.js
-
 const API_BASE_URL = '/api';  // This will proxy to your Render backend
 
 // User authentication functions
 export const registerUser = async (userData) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/register`, {
+    const response = await fetch(`${API_BASE_URL}/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -28,7 +26,7 @@ export const registerUser = async (userData) => {
 
 export const loginUser = async (credentials) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/login`, {
+    const response = await fetch(`${API_BASE_URL}/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -57,7 +55,7 @@ export const loginUser = async (credentials) => {
 // Admin authentication functions
 export const adminLogin = async (credentials) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/admin/login`, {
+    const response = await fetch(`${API_BASE_URL}/admin/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -149,7 +147,7 @@ export const checkUserFeedbackStatus = async () => {
       return { hasSubmitted: false, feedbackCount: 0 };
     }
 
-    const response = await fetch(`${API_BASE_URL}/api/feedback`, {
+    const response = await fetch(`${API_BASE_URL}/feedback`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -179,7 +177,7 @@ export const checkTokenValidity = async () => {
       return { valid: false, user: null };
     }
 
-    const response = await fetch(`${API_BASE_URL}/api/me`, {
+    const response = await fetch(`${API_BASE_URL}/me`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }

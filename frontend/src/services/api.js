@@ -1,6 +1,4 @@
-// src/services/api.js
-
-const API_BASE_URL = '/api';  // This will proxy to your Render backend;
+const API_BASE_URL = '/api';  // This will proxy to your Render backend
 
 // Get auth token
 const getAuthToken = () => {
@@ -18,17 +16,13 @@ export const feedbackAPI = {
       throw new Error('Please login to submit feedback');
     }
 
-    const response = await fetch(`${API_BASE_URL}/api/feedback`, {
+    const response = await fetch(`${API_BASE_URL}/feedback`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        'Authorization': `Bearer ${token}`
       },
-      body: JSON.stringify({
-        content: feedbackData.content,
-        category: 'general', // Default category
-        rating: 5 // Default rating
-      }),
+      body: JSON.stringify(feedbackData),
     });
 
     if (!response.ok) {
@@ -36,38 +30,39 @@ export const feedbackAPI = {
       throw new Error(errorData.detail || 'Failed to submit feedback');
     }
 
-    return response.json();
+    return await response.json();
   },
 
   // Submit anonymous feedback
   submitAnonymousFeedback: async (feedbackData) => {
-    const response = await fetch(`${API_BASE_URL}/api/feedback/anonymous`, {
+    const response = await fetch(`${API_BASE_URL}/feedback/anonymous`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        content: feedbackData.content,
-        category: 'general',
-        rating: 5
-      }),
+      body: JSON.stringify(feedbackData),
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.detail || 'Failed to submit anonymous feedback');
+      throw new Error(errorData.detail || 'Failed to submit feedback');
     }
 
-    return response.json();
+    return await response.json();
   },
 
   // Get all feedback (admin only)
   getAllFeedback: async () => {
     const token = getAuthToken();
-    const response = await fetch(`${API_BASE_URL}/api/feedback`, {
+    if (!token) {
+      throw new Error('Authentication required');
+    }
+
+    const response = await fetch(`${API_BASE_URL}/feedback`, {
+      method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
-      },
+        'Authorization': `Bearer ${token}`
+      }
     });
 
     if (!response.ok) {
@@ -75,73 +70,46 @@ export const feedbackAPI = {
       throw new Error(errorData.detail || 'Failed to fetch feedback');
     }
 
-    return response.json();
+    return await response.json();
+  },
+
+  // Get feedback stats (admin only)
+  getFeedbackStats: async () => {
+    const token = getAuthToken();
+    if (!token) {
+      throw new Error('Authentication required');
+    }
+
+    const response = await fetch(`${API_BASE_URL}/feedback/stats`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || 'Failed to fetch feedback stats');
+    }
+
+    return await response.json();
   }
 };
 
 // User API functions
 export const userAPI = {
-  // Register user
-  registerUser: async (userData) => {
-    const response = await fetch(`${API_BASE_URL}/api/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.detail || 'Registration failed');
-    }
-
-    return response.json();
-  },
-
-  // Login user
-  loginUser: async (credentials) => {
-    const response = await fetch(`${API_BASE_URL}/api/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(credentials),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.detail || 'Login failed');
-    }
-
-    return response.json();
-  },
-
-  // Admin login
-  adminLogin: async (credentials) => {
-    const response = await fetch(`${API_BASE_URL}/api/admin/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(credentials),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.detail || 'Admin login failed');
-    }
-
-    return response.json();
-  },
-
   // Get all users (admin only)
   getAllUsers: async () => {
     const token = getAuthToken();
-    const response = await fetch(`${API_BASE_URL}/api/users`, {
+    if (!token) {
+      throw new Error('Authentication required');
+    }
+
+    const response = await fetch(`${API_BASE_URL}/users`, {
+      method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
-      },
+        'Authorization': `Bearer ${token}`
+      }
     });
 
     if (!response.ok) {
@@ -149,6 +117,49 @@ export const userAPI = {
       throw new Error(errorData.detail || 'Failed to fetch users');
     }
 
-    return response.json();
+    return await response.json();
+  },
+
+  // Get current user info
+  getCurrentUser: async () => {
+    const token = getAuthToken();
+    if (!token) {
+      throw new Error('Authentication required');
+    }
+
+    const response = await fetch(`${API_BASE_URL}/me`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || 'Failed to fetch user info');
+    }
+
+    return await response.json();
+  }
+};
+
+// General API utility functions
+export const apiUtils = {
+  // Test API connection
+  testConnection: async () => {
+    const response = await fetch(`${API_BASE_URL}/health`);
+    if (!response.ok) {
+      throw new Error('API connection failed');
+    }
+    return await response.json();
+  },
+
+  // Get API status
+  getStatus: async () => {
+    const response = await fetch(`${API_BASE_URL}/`);
+    if (!response.ok) {
+      throw new Error('API status check failed');
+    }
+    return await response.json();
   }
 };
