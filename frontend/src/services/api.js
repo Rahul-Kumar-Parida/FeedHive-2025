@@ -1,6 +1,6 @@
 // src/services/api.js
 
-const API_BASE_URL = process.env.VITE_API_BASE_URL || 'https://feedhive-analysis.onrender.com';
+const API_BASE_URL = '/api';  // This will proxy to your Render backend;
 
 // Get auth token
 const getAuthToken = () => {
