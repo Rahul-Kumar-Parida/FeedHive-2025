@@ -1,6 +1,6 @@
 // src/services/api.js
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:8000';
+const API_BASE_URL = process.env.VITE_API_BASE_URL || 'https://feedhive-analysis.onrender.com';
 
 // Get auth token
 const getAuthToken = () => {
