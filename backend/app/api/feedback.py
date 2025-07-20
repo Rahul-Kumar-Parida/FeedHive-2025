@@ -46,9 +46,8 @@ async def create_feedback(
         logger.info(f"Creating feedback for user: {current_user.email}")
         
         db_feedback = Feedback(
+            title=feedback.title,
             content=feedback.content,
-            category=feedback.category,
-            rating=feedback.rating,
             user_id=current_user.id
         )
         
@@ -75,9 +74,8 @@ async def create_anonymous_feedback(
         logger.info("Creating anonymous feedback")
         
         db_feedback = Feedback(
+            title=feedback.title,
             content=feedback.content,
-            category=feedback.category,
-            rating=feedback.rating,
             user_id=None  # Anonymous feedback
         )
         
