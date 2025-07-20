@@ -1,4 +1,4 @@
-const API_BASE_URL = '/api';  // This will proxy to your Render backend
+const API_BASE_URL = '/api'; // or use import.meta.env.VITE_API_BASE_URL
 
 // Get auth token
 const getAuthToken = () => {
@@ -15,7 +15,6 @@ export const feedbackAPI = {
     if (!token) {
       throw new Error('Please login to submit feedback');
     }
-
     const response = await fetch(`${API_BASE_URL}/feedback`, {
       method: 'POST',
       headers: {
@@ -24,12 +23,10 @@ export const feedbackAPI = {
       },
       body: JSON.stringify(feedbackData),
     });
-
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.detail || 'Failed to submit feedback');
     }
-
     return await response.json();
   },
 
@@ -42,12 +39,10 @@ export const feedbackAPI = {
       },
       body: JSON.stringify(feedbackData),
     });
-
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.detail || 'Failed to submit feedback');
     }
-
     return await response.json();
   },
 
@@ -57,19 +52,16 @@ export const feedbackAPI = {
     if (!token) {
       throw new Error('Authentication required');
     }
-
     const response = await fetch(`${API_BASE_URL}/feedback`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`
       }
     });
-
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.detail || 'Failed to fetch feedback');
     }
-
     return await response.json();
   },
 
@@ -79,19 +71,16 @@ export const feedbackAPI = {
     if (!token) {
       throw new Error('Authentication required');
     }
-
     const response = await fetch(`${API_BASE_URL}/feedback/stats`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`
       }
     });
-
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.detail || 'Failed to fetch feedback stats');
     }
-
     return await response.json();
   }
 };
@@ -104,19 +93,16 @@ export const userAPI = {
     if (!token) {
       throw new Error('Authentication required');
     }
-
     const response = await fetch(`${API_BASE_URL}/users`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`
       }
     });
-
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.detail || 'Failed to fetch users');
     }
-
     return await response.json();
   },
 
@@ -126,19 +112,16 @@ export const userAPI = {
     if (!token) {
       throw new Error('Authentication required');
     }
-
     const response = await fetch(`${API_BASE_URL}/me`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`
       }
     });
-
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.detail || 'Failed to fetch user info');
     }
-
     return await response.json();
   }
 };
