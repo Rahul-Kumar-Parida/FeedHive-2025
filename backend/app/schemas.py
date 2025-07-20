@@ -24,10 +24,10 @@ class AdminLogin(BaseModel):
     email: str
     password: str
 
+# --- FEEDBACK SCHEMAS ---
 class FeedbackBase(BaseModel):
+    title: str
     content: str
-    category: str
-    rating: int
 
 class FeedbackCreate(FeedbackBase):
     pass
