@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from .database import engine, Base
 import logging
 import os
 
@@ -8,7 +9,14 @@ import os
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="FeedHive API", version="1.0.0")
+# Create database tables
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI(
+    title="FeedHive API", 
+    version="1.0.0",
+    description="Feedback collection and analysis system"
+)
 
 # Add CORS middleware FIRST
 app.add_middleware(
@@ -27,7 +35,7 @@ app.include_router(feedback.router, prefix="/api", tags=["feedback"])
 
 @app.get("/")
 async def read_root():
-    return {"message": "FeedHive API is running!"}
+    return {"message": "FeedHive API is running!", "version": "1.0.0"}
 
 @app.get("/test")
 async def test_endpoint():
