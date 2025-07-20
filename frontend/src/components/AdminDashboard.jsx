@@ -1,4 +1,3 @@
-// src/components/AdminDashboard.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { userAPI, feedbackAPI } from '../services/api';
@@ -22,6 +21,7 @@ const AdminDashboard = ({ onAdminLogout }) => {
     }
     setAdminUser(admin);
     fetchData();
+    // eslint-disable-next-line
   }, [navigate]);
 
   const fetchData = async () => {
@@ -42,15 +42,8 @@ const AdminDashboard = ({ onAdminLogout }) => {
   };
 
   const handleLogout = () => {
-    // Clear admin data from localStorage
     logoutAdmin();
-    
-    // Call parent's onAdminLogout function to update App state
-    if (onAdminLogout) {
-      onAdminLogout();
-    }
-    
-    // Redirect to home page
+    if (onAdminLogout) onAdminLogout();
     navigate('/');
   };
 
@@ -69,6 +62,18 @@ const AdminDashboard = ({ onAdminLogout }) => {
     if (lowerSentiment.includes('negative')) return '😞';
     return '😐';
   };
+
+  // Sentiment summary for company
+  const sentimentSummary = feedback.reduce(
+    (acc, item) => {
+      if (!item.sentiment) acc.neutral += 1;
+      else if (item.sentiment.toLowerCase().includes('positive')) acc.positive += 1;
+      else if (item.sentiment.toLowerCase().includes('negative')) acc.negative += 1;
+      else acc.neutral += 1;
+      return acc;
+    },
+    { positive: 0, negative: 0, neutral: 0 }
+  );
 
   if (loading) {
     return (
@@ -92,6 +97,7 @@ const AdminDashboard = ({ onAdminLogout }) => {
 
       {error && <div className="error-message">{error}</div>}
 
+      {/* Sentiment Summary */}
       <div className="dashboard-stats">
         <div className="stat-card">
           <h3>Total Users</h3>
@@ -100,6 +106,18 @@ const AdminDashboard = ({ onAdminLogout }) => {
         <div className="stat-card">
           <h3>Total Feedback</h3>
           <p className="stat-number">{feedback.length}</p>
+        </div>
+        <div className="stat-card">
+          <h3>Positive Feedback</h3>
+          <p className="stat-number positive">{sentimentSummary.positive}</p>
+        </div>
+        <div className="stat-card">
+          <h3>Negative Feedback</h3>
+          <p className="stat-number negative">{sentimentSummary.negative}</p>
+        </div>
+        <div className="stat-card">
+          <h3>Neutral Feedback</h3>
+          <p className="stat-number neutral">{sentimentSummary.neutral}</p>
         </div>
         <div className="stat-card">
           <h3>Authenticated Feedback</h3>
@@ -170,9 +188,8 @@ const AdminDashboard = ({ onAdminLogout }) => {
                     </span>
                   </div>
                   <div className="feedback-content">
+                    <p><strong>Title:</strong> {item.title}</p>
                     <p><strong>Content:</strong> {item.content}</p>
-                    <p><strong>Category:</strong> {item.category}</p>
-                    <p><strong>Rating:</strong> {item.rating}/5</p>
                     <p><strong>User:</strong> {item.user_id ? `User #${item.user_id}` : 'Anonymous'}</p>
                     <p><strong>Date:</strong> {new Date(item.created_at).toLocaleString()}</p>
                   </div>
