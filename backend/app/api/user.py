@@ -4,7 +4,7 @@ from typing import List
 from ..database import get_db
 from ..models import User
 from ..schemas import UserCreate, UserResponse, UserLogin, AdminLogin
-from ..auth import get_password_hash, create_access_token, get_current_user
+from ..auth import get_password_hash, create_access_token, get_current_user, verify_password
 import logging
 
 logger = logging.getLogger(__name__)
@@ -64,7 +64,7 @@ async def login_user(user_credentials: UserLogin, db: Session = Depends(get_db))
             )
         
         user = db.query(User).filter(User.email == user_credentials.email).first()
-        if not user or not user.verify_password(user_credentials.password):
+        if not user or not verify_password(user_credentials.password, user.hashed_password):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect email or password"
